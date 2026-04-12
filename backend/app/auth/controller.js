@@ -1,4 +1,6 @@
 const { buildPoseidon } = require("circomlibjs");
+const { colUser } = require("../../db/firebase")
+const { addDoc } = require("firebase/firestore")
 
 let users = {
     "ocang": {
@@ -19,6 +21,8 @@ module.exports = {
                 const secret = BigInt(password)
                 const hashValue = poseidon([secret])
                 const hash = poseidon.F.toString(hashValue)
+
+                await addDoc(colUser, { username, hash });
 
                 res.status(200).json({ message: 'User registered successfully', data: { username, hash } });
             }
