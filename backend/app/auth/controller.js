@@ -2,12 +2,6 @@ const { buildPoseidon } = require("circomlibjs");
 const { colUser } = require("../../db/firebase")
 const { addDoc, getDocs, query, where } = require("firebase/firestore")
 
-let users = {
-    "ocang": {
-        hash: "13652621327073936666000543602573161427486257595978168586948791791815955152507"
-    }
-}
-
 module.exports = {
     register: async (req, res) => {
         try {
@@ -39,14 +33,19 @@ module.exports = {
     },
     login: async (req, res) => {
         try {
-            const { username, proof, publicSignals } = req.body;
+            const { username, proof, publicSignals } = req.body
 
-            const user = users[username];
-            if (!user) {
-                return res.status(404).json({ error: "user not found" });
+            const checkUsername = query(colUser, where("username", "==", username))
+            const querySnapshot = await getDocs(checkUsername)
+
+            if (querySnapshot.empty) {
+                return res.status(403).json({ message: `${username} isnt exist` })
+            } else {
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                res.status(200).json({ message: 'Login successful', data: userData })
             }
-
-            
         } catch {
             res.status(500).json({ message: 'Internal Server Error' });
         }
