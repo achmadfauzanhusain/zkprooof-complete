@@ -1,6 +1,6 @@
 const { buildPoseidon } = require("circomlibjs");
 const { colUser } = require("../../db/firebase")
-const { addDoc } = require("firebase/firestore")
+const { addDoc, getDocs, query, where } = require("firebase/firestore")
 
 let users = {
     "ocang": {
@@ -14,17 +14,24 @@ module.exports = {
             const { username, password } = req.body;
             const { confirmPassword } = req.body;
 
-            if (password !== confirmPassword) {
-                return res.status(400).json({ message: 'Passwords do not match' });
+            const q = query(colUser, where("username", "==", username));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                return res.status(400).json({ message: `${username} already registered, use different username!` });
             } else {
-                const poseidon = await buildPoseidon()
-                const secret = BigInt(password)
-                const hashValue = poseidon([secret])
-                const hash = poseidon.F.toString(hashValue)
+                if (password !== confirmPassword) {
+                    return res.status(400).json({ message: 'Passwords do not match' });
+                } else {
+                    const poseidon = await buildPoseidon()
+                    const secret = BigInt(password)
+                    const hashValue = poseidon([secret])
+                    const hash = poseidon.F.toString(hashValue)
 
-                await addDoc(colUser, { username, hash });
+                    await addDoc(colUser, { username, hash });
 
-                res.status(200).json({ message: 'User registered successfully', data: { username, hash } });
+                    res.status(200).json({ message: 'User registered successfully', data: { username, hash } });
+                }
             }
         } catch {
             res.status(500).json({ message: 'Internal Server Error' });
