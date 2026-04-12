@@ -8,7 +8,7 @@ const poppins = Poppins({
 export default function Layout({ children }) {
   return (
     <>
-        <main className={poppins.className}>
+        <main className={poppins.className + " pb-14"}>
             {children}
         </main>
     </>
