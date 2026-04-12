@@ -1,6 +1,12 @@
 const { buildPoseidon } = require("circomlibjs");
+const snarkjs = require("snarkjs")
+const fs = require("fs")
+const path = require("path")
+
 const { colUser } = require("../../db/firebase")
 const { addDoc, getDocs, query, where } = require("firebase/firestore")
+
+const vKey = JSON.parse(fs.readFileSync(path.join(__dirname, "../../zk/verification-key.json")))
 
 module.exports = {
     register: async (req, res) => {
@@ -27,7 +33,7 @@ module.exports = {
                     res.status(200).json({ message: 'User registered successfully', data: { username, hash } });
                 }
             }
-        } catch {
+        } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     },
@@ -43,6 +49,29 @@ module.exports = {
             } else {
                 const userDoc = querySnapshot.docs[0];
                 const userData = userDoc.data();
+
+                if(publicSignals[0] !== userData.hash) {
+                    return res.status(403).json({ message: 'Invalid identity' })
+                }
+
+                try {
+                    const verified = await snarkjs.groth16.verify(
+                        vKey,
+                        publicSignals,
+                        proof
+                    )
+
+                    if (!verified) {
+                        return res.status(401).json({ message: "invalid proof" })
+                    }
+
+                    return res.json({
+                        success: true,
+                        message: "login success"
+                    })
+                } catch (error) {
+                    res.status(403).json({ message: 'Invalid proof' })
+                }
                 
                 res.status(200).json({ message: 'Login successful', data: userData })
             }

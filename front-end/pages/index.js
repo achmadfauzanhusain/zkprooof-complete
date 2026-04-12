@@ -8,6 +8,8 @@ export default function Home() {
   const [proof, setProof] = useState(null)
   const [publicSignals, setPublicSignals] = useState(null)
 
+  const [username, setUsername] = useState("")
+
   const handleGenerateProof = async() => {
     try {
       setLoading(true)
@@ -49,6 +51,21 @@ export default function Home() {
           <pre className="bg-gray-100 p-4 overflow-auto">{JSON.stringify(publicSignals, null, 2)}</pre>
         </div>
       )}
+
+      <div className="mt-24">
+        <h1 className="text-3xl font-semibold">Login</h1>
+        <p className="text-sm opacity-75">you can copy the generated proof and public signals!</p>
+
+        <input 
+          className="mt-4 w-full bg-gray-100 p-3 outline-none" 
+          placeholder="enter your username..." 
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <button className="bg-blue-400 text-white w-full py-3 mt-2 cursor-pointer hover:bg-blue-500 transition-all duration-300" onClick={handleGenerateProof}>
+          {loading ? "generating..." : "generate proof!"}
+        </button>
+      </div>
     </div>
   );
 }
