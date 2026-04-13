@@ -10,3 +10,12 @@ export async function setLogin(data) {
         data,
     })
 }
+
+export async function setRegister(data) {
+    const url = `${ROOT_API}/auth/register`
+    return callApi({
+        url,
+        method: "POST",
+        data,
+    })
+}
