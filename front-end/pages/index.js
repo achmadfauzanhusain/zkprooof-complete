@@ -3,6 +3,7 @@ import { generateProof } from "../lib/zk/generateProof"
 import { setLogin } from "@/services/auth";
 
 import Cookies from "js-cookie";
+import Link from "next/link";
 
 export default function Home() {
   const [secret, setSecret] = useState("")
@@ -44,7 +45,11 @@ export default function Home() {
   }
   return (
     <div className="mt-24 px-32">
-      <div>
+      <Link href="/auth/register" className="text-sm text-blue-500 hover:underline">
+        belum punya akun?
+      </Link>
+
+      <div className="mt-8">
         <h1 className="text-3xl font-semibold">Generate Proof</h1>
         <p className="text-sm opacity-75">Generate proof before login!</p>
 
@@ -73,7 +78,7 @@ export default function Home() {
 
       <div className="mt-24">
         <h1 className="text-3xl font-semibold">Login</h1>
-        <p className="text-sm opacity-75">you can copy the generated proof and public signals!</p>
+        <p className="text-sm opacity-75">result of genrate proof is automatically use!</p>
 
         <input 
           className="mt-4 w-full bg-gray-100 p-3 outline-none" 
