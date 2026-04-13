@@ -45,7 +45,7 @@ export default function Home() {
   }
   return (
     <div className="mt-24 px-32">
-      <Link href="/auth/register" className="text-sm text-blue-500 hover:underline">
+      <Link href="/register" className="text-sm text-blue-500 hover:underline">
         belum punya akun?
       </Link>
 
