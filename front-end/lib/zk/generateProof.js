@@ -2,6 +2,10 @@ import * as snarkjs from "snarkjs"
 import { buildPoseidon } from "circomlibjs"
 
 export async function generateProof(secret) {
+    if(!secret) {
+        throw new Error("Secret is required to generate proof")
+    }
+
     const poseidon = await buildPoseidon()
 
     const secretBigInt = BigInt(secret)

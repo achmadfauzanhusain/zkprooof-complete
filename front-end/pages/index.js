@@ -23,6 +23,10 @@ export default function Home() {
       setLoading(false)
     }
   }
+
+  const handleLogin = async() => {
+
+  }
   return (
     <div className="mt-24 px-32">
       <div>
@@ -62,8 +66,8 @@ export default function Home() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <button className="bg-blue-400 text-white w-full py-3 mt-2 cursor-pointer hover:bg-blue-500 transition-all duration-300" onClick={handleGenerateProof}>
-          {loading ? "generating..." : "generate proof!"}
+        <button className="bg-blue-400 text-white w-full py-3 mt-2 cursor-pointer hover:bg-blue-500 transition-all duration-300" onClick={handleLogin}>
+          {loading ? "loading..." : "login"}
         </button>
       </div>
     </div>

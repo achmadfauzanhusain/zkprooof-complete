@@ -2,6 +2,8 @@ const { buildPoseidon } = require("circomlibjs");
 const snarkjs = require("snarkjs")
 const fs = require("fs")
 const path = require("path")
+const jwt = require("jsonwebtoken")
+const { jwtKey } = require("../../config")
 
 const { colUser } = require("../../db/firebase")
 const { addDoc, getDocs, query, where } = require("firebase/firestore")
@@ -16,6 +18,10 @@ module.exports = {
 
             const q = query(colUser, where("username", "==", username));
             const querySnapshot = await getDocs(q);
+
+            if(!password || !confirmPassword) {
+                return res.status(400).json({ message: 'Password is required' });
+            }
 
             if (!querySnapshot.empty) {
                 return res.status(400).json({ message: `${username} already registered, use different username!` });
@@ -64,18 +70,28 @@ module.exports = {
                     if (!verified) {
                         return res.status(401).json({ message: "invalid proof" })
                     }
+                        const token = jwt.sign({
+                            user: {
+                                username: userData.username,
+                                hash: userData.hash
+                            }
+                        }, jwtKey)
 
-                    return res.json({
-                        success: true,
-                        message: "login success"
-                    })
+                        res.status(201).json({
+                            success: true,
+                            message: "login success",
+                            data: {
+                                token: token,
+                                username: userData.username,
+                                hash: userData.hash
+                            }
+                        })
+                    
                 } catch (error) {
-                    res.status(403).json({ message: 'Invalid proof' })
+                    res.status(403).json({ message: error.message })
                 }
-                
-                res.status(200).json({ message: 'Login successful', data: userData })
             }
-        } catch {
+        } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     }
