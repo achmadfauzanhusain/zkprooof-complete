@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { generateProof } from "../lib/zk/generateProof"
+import { setLogin } from "@/services/auth";
+
+import Cookies from "js-cookie";
 
 export default function Home() {
   const [secret, setSecret] = useState("")
@@ -25,7 +28,19 @@ export default function Home() {
   }
 
   const handleLogin = async() => {
+    setLoading(true)
+    const data = { username, proof, publicSignals }
 
+    const response = await setLogin(data)
+    if(response.success === false) {
+      alert("Login failed: " + response.message)
+    } else {
+      const token = response.data.data.token
+      const tokenBase64 = btoa(token);
+      Cookies.set("token", tokenBase64, { expires: 7 });
+      console.log(response.data.data.token)
+    }
+    setLoading(false)
   }
   return (
     <div className="mt-24 px-32">

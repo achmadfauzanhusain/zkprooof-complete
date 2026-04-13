@@ -50,6 +50,14 @@ module.exports = {
             const checkUsername = query(colUser, where("username", "==", username))
             const querySnapshot = await getDocs(checkUsername)
 
+            if(!proof || !publicSignals) {
+                return res.status(400).json({ message: 'you must generate a proof first' })
+            }
+
+            if(!username) {
+                return res.status(400).json({ message: 'username is required' })
+            }
+
             if (querySnapshot.empty) {
                 return res.status(403).json({ message: `${username} isnt exist` })
             } else {

@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export default async function callApi({ method, url, data = null, token, serverToken }) {
+export default async function callApi({ method, url, data, token, serverToken }) {
     let headers = {}
     if(serverToken) {
         headers = {
