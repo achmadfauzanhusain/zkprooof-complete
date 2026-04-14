@@ -19,8 +19,8 @@ module.exports = {
             const q = query(colUser, where("username", "==", username));
             const querySnapshot = await getDocs(q);
 
-            if(!password || !confirmPassword) {
-                return res.status(400).json({ message: 'Password is required' });
+            if(!username || !password || !confirmPassword) {
+                return res.status(400).json({ message: 'All fields are required' });
             }
 
             if (!querySnapshot.empty) {

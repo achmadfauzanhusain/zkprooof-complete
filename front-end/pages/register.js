@@ -1,4 +1,6 @@
+import { setRegister } from "@/services/auth"
 import { useState } from "react"
+import { useRouter } from "next/router"
 
 const Register = () => {
     const [username, setUsername] = useState("")
@@ -6,8 +8,21 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleRegister = async() => {
+    const router = useRouter()
 
+    const handleRegister = async() => {
+        setLoading(true)
+        const data = { username, password, confirmPassword }
+
+        const response = await setRegister(data)
+        if(response.error) {
+            alert("Registration failed: " + response.error)
+        } else {
+            await setRegister(data)
+            alert("Registration successful! Please login.")
+            router.push("/")
+        }
+        setLoading(false)
     }
 
     return (
